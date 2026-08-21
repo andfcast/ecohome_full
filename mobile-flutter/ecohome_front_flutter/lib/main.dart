@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'screens/main_screen.dart';
 import 'screens/admin_products_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'services/auth_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
   // Controladores para capturar lo que el usuario escribe
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   bool _isLoading = false;
 
@@ -72,20 +72,9 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // URL de tu backend en Express.js
-      final url = Uri.parse('http://localhost:3000/auth/login');
+      
 
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
+        final data = await _authService.login(email, password);
         final token = data['token'] ?? data['jwt'];
         
         // Extracción de datos de perfil
@@ -130,10 +119,7 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           _showMessage('Login exitoso pero no se recibió el token');
         }
-      } else {
-        final errorData = jsonDecode(response.body);
-        _showMessage(errorData['message'] ?? 'Error de autenticación');
-      }
+      
     } catch (e) {
       _showMessage('No se pudo conectar con el servidor ($e)');
     } finally {
