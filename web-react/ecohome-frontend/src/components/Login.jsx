@@ -26,15 +26,15 @@ export default function Login({ onLoginSuccess }) {
 
     try {
       const data = await loginUser(email, password);
-      // Asumimos que el backend retorna el token en data.token o data.data.token
+
       const token = data.token || data.data?.token;
+      const role =  data.user.role || 'client';
 
       if (token) {
         // Guardamos el token en localStorage para persistencia
         localStorage.setItem('token', token);
         localStorage.setItem('userEmail', email);
-        localStorage.setItem('userRole', data.user.role || '');
-        console.log(data.user.role);
+        localStorage.setItem('userRole', role || '');
         // Notificamos al componente padre
         onLoginSuccess({ token, email, role });
       } else {
