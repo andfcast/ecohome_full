@@ -10,9 +10,13 @@ export default function App() {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('userEmail');
     const role = localStorage.getItem('userRole');
-
     if (token && email && role) {
       setAuthData({ token, email, role });
+    }
+    else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userRole');
     }
   }, []);
 
